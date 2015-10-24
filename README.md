@@ -20,6 +20,47 @@ All important parameters can be configured in config.h.
 - **DAMPING**: 1 for hybrid damping, 0 for without damping.
 
 ## Input file format
+Input file should be given **edgelist** format. First line should give total number of nodes and total number of edges. 
+If node weights exists, they should be specified first where each line should contain node weight.
+If edge weights exists, they should be specified after node weight where each line should cantain source node, destination node, and weight.
+
+```
+NUMBER_OF_NODES NUMBER_OF_EDGES
+WEIGHT_OF_NODE_1
+WEIGHT_OF_NODE_2
+...
+WEIGHT_OF_NODE_N
+SOURCE_NODE DESTINATION_NODE WEIGHT_OF_EDGE_1
+SOURCE_NODE DESTINATION_NODE WEIGHT_OF_EDGE_2
+...
+SOURCE_NODE DESTINATION_NODE WEIGHT_OF_EDGE_M
+```
+
+Node that source node and destination node should be between 1 and NUMBER_OF_NODES.
+
+If there is no node weight (VAR_NODE = 0 in configuration), you can skip the weights of nodes.
+
+```
+NUMBER_OF_NODES NUMBER_OF_EDGES
+SOURCE_NODE DESTINATION_NODE WEIGHT_OF_EDGE_1
+SOURCE_NODE DESTINATION_NODE WEIGHT_OF_EDGE_2
+...
+SOURCE_NODE DESTINATION_NODE WEIGHT_OF_EDGE_M
+``` 
+
+Similarly, if there is no edge weight (VAR_EDGE = 0 in configuration), you should skip the weights of edes.
+
+```
+NUMBER_OF_NODES NUMBER_OF_EDGES
+WEIGHT_OF_NODE_1
+WEIGHT_OF_NODE_2
+...
+WEIGHT_OF_NODE_N
+SOURCE_NODE DESTINATION_NODE 
+SOURCE_NODE DESTINATION_NODE 
+...
+SOURCE_NODE DESTINATION_NODE 
+```
 
 
 ## User-defined functions
