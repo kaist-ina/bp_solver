@@ -104,7 +104,7 @@ i.e. you can treat in-edges (which is specified in inedgeList in class Node) and
 
 ### 2. Traversing Nodes and Edges
 Class Master holds just list of nodes in 'nodeList'.
-Here how to traverse nodes and edges are explained. 
+Here how to traverse nodes and edges is explained. 
 
 ```
 for(int i=0; i<nodeN; ++i){
