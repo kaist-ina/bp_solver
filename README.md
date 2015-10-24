@@ -98,7 +98,7 @@ Post processing algorithm should be implemented this user-defined function.
 Here you should utilize the transformed weight (tweight) instead of original weight (weight) of node or edge. 
 As a result of post-processing, 'decision' should be set appropriately. 
 Initially all decision is set to 0.
-You can specify the decision -1 for unselected, 0 for undecided, 1 for selected (i.e. x_e in IP formulation is decision).
+You can set the decision -1 for unselected, 0 for undecided, 1 for selected (i.e. x_e in IP formulation is decision).
 
 ## Implementation TIPs
 ### 1. Directed and Undirected Graph
