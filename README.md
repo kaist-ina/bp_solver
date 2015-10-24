@@ -97,4 +97,29 @@ Use a given code for maximum weight matching as a skeleton.
 Post processing algorithm should be implemented this user-defined function. Here you should utilize the transformed weight (tweight) instead of original weight (weight) of node or edge. 
 
 ## Implementation TIPs
-### 1.
+### 1. Directed and Undirected Graph
+This implementation treat all input graph as directed graph. 
+If you need to process undirected graph, your implementation should treat it as undirected graph.
+i.e. you can treat in-edges (which is specified in inedgeList in class Node) and out-edges (which is specified in outedgeList in class Node) as connected edges.
+
+### 2. Traversing Nodes and Edges
+Class Master holds just list of nodes.
+Here how to traverse nodes and edges are explained. 
+
+```
+for(int i=0; i<nodeN; ++i){
+	int limit;
+	Node *n = nodeList[i];
+	// traversing nodes
+
+	limit = n->outedgeList.size();
+	for(int j=0; j<limit; ++j){
+		Edge *e = n->outedgeList[j];
+		// traversing edges
+	}
+}
+```
+
+Nodes can be traversed simply by looking at nodeList of class Master.
+To traverse edges, while traversing nodes by traversing its outedgeList all of the edges can be traversed from the source side.
+One can traverse all of the edges from the destination side using 'inedgeList', too.
