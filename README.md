@@ -22,10 +22,9 @@ All important parameters can be configured in config.h.
 ## User-defined functions
 To utilize BP-solver for combinatorial optimization problem, you need to modify 4 functions. Defaults are set for maximum weight matching
 
-1. **Message Initialization**
-
--Edge::initEdgeMessage () in Edge.cpp (for edge variables)
--Node::initNodeMessage () in Node.cpp (for node variables)
+### 1. Message Initialization
+- Edge::initEdgeMessage () in Edge.cpp (for edge variables)
+- Node::initNodeMessage () in Node.cpp (for node variables)
 
 You should specify message initialization rule in one of these functions. 
 If you try to use node variables (VAR_NODE = 1), specify the message initialization rule in initNodeMessage() function and empty initEdgeMessage() function.
@@ -33,6 +32,6 @@ If you try to use edge variables (VAR_EDGE = 1), specify the message initializat
 For each edge there are two corresponding messages: one from source to destination (s_to_d) and the other from destination to source (d_to_s).
 If you are not sure how to initialize the messages we recommend to initialize 0.5*EDGE_WEIGHT for edge variables, NODE_WEIGHT/DEGREE_OF_NODE for node variables.
 
-2. BP Message Update
-3. Weight Transformation
-4. Post-Processing
+### 2. BP Message Update
+### 3. Weight Transformation
+### 4. Post-Processing
