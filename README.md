@@ -103,7 +103,7 @@ If you need to process undirected graph, your implementation should treat it as 
 i.e. you can treat in-edges (which is specified in inedgeList in class Node) and out-edges (which is specified in outedgeList in class Node) as connected edges.
 
 ### 2. Traversing Nodes and Edges
-Class Master holds just list of nodes.
+Class Master holds just list of nodes in 'nodeList'.
 Here how to traverse nodes and edges are explained. 
 
 ```
