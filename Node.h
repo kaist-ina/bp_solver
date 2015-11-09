@@ -29,6 +29,9 @@ class Node {
 	void addOutEdge (Edge *e);
 	void initMessage ();
 	void updateMessage (bool damp);
+#if !ASYNC
+	void passMessages ();
+#endif
 	void transformWeight ();
 	int getDegree ();
 };

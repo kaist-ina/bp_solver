@@ -17,6 +17,10 @@ public:
 #endif
 	double s_to_d;
 	double d_to_s;
+#if !ASYNC
+	double new_s_to_d;
+	double new_d_to_s;
+#endif
 
 #if VAR_EDGE
 	Edge (Node *s, Node *d, double w, double n);
@@ -26,6 +30,22 @@ public:
 #endif
 #if VAR_EDGE
 	void initEdgeMessage ();
+	void updateDtoS (double new_msg)
+	{
+#if ASYNC
+	d_to_s = new_msg;
+#else
+	new_d_to_s = new_msg;
+#endif
+	}
+	void updateStoD (double new_msg)
+	{
+#if ASYNC
+	s_to_d = new_msg;
+#else
+	new_s_to_d = new_msg;
+#endif
+	}
 	double getWeight()
 	{return (weight + noise);}
 #endif

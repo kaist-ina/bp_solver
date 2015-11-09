@@ -127,6 +127,7 @@ void Node::updateMessage (bool damp){
 	double secondMax = 0;
 	double tmp;
 	int limit;
+	double new_val;
 
 	limit = outedgeList.size();
 	for (int i=0;i<limit;++i){
@@ -162,19 +163,25 @@ void Node::updateMessage (bool damp){
 	limit = outedgeList.size();
 	for(int i=0;i<limit;++i){
 		Edge *e = outedgeList[i];
-		if (DAMPING && damp)
-			e->s_to_d = 0.5*e->s_to_d + 0.5*((e!=max_edge)?max:secondMax);
-		else
-			e->s_to_d = ((e!=max_edge)?max:secondMax);
+		if (DAMPING && damp){
+			new_val = 0.5*e->s_to_d + 0.5*((e!=max_edge)?max:secondMax);
+			e->updateStoD (new_val);
+		}else {
+			new_val = ((e!=max_edge)?max:secondMax);
+			e->updateStoD (new_val);
+		}
 	}
 
 	limit = inedgeList.size();
 	for(int i=0;i<limit;++i){
 		Edge *e = inedgeList[i];
-		if (DAMPING && damp)
-			e->d_to_s = 0.5*e->d_to_s + 0.5*((e!=max_edge)?max:secondMax);
-		else
-			e->d_to_s = ((e!=max_edge)?max:secondMax);	
+		if (DAMPING && damp){
+			new_val = 0.5*e->d_to_s + 0.5*((e!=max_edge)?max:secondMax);
+			e->updateDtoS (new_val);
+		}else {
+			new_val = ((e!=max_edge)?max:secondMax);
+			e->updateDtoS (new_val);
+		}
 	}
 
 /* Minimum Weight Vertex Cover */
@@ -253,6 +260,18 @@ void Node::updateMessage (bool damp){
 	}
 */
 }
+
+#if !ASYNC
+void Node::passMessages (){
+	int limit = outedgeList.size();
+
+	for (int i=0; i<limit; ++i){
+		Edge *e = outedgeList[i];
+		e->d_to_s = e->new_d_to_s;
+		e->s_to_d = e->new_s_to_d;
+	}
+}
+#endif
 
 int Node::getDegree (){
 #if VAR_EDGE

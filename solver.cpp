@@ -104,6 +104,11 @@ void Master::initMessage () {
 void Master::oneIteration (bool damp){
 	for (int i=0; i<nodeN; ++i)
 		nodeList[i]->updateMessage(damp);
+
+#if !ASYNC
+	for (int i=0; i<nodeN; ++i)
+		nodeList[i]->passMessages ();
+#endif
 }
 
 void Master::transformWeight (){
@@ -291,7 +296,7 @@ void Master::printResult (){
 
 }
 
-void *runThread (void *arg_){
+void *runThreadUpdate (void *arg_){
 	long arg = (long)arg_;
 	unsigned node_start;
 	unsigned node_end;
@@ -317,6 +322,35 @@ void *runThread (void *arg_){
 		}
 	}
 }
+
+#if !ASYNC
+void *runThreadPass (void *arg_){
+	long arg = (long)arg_;
+	unsigned node_start;
+	unsigned node_end;
+	unsigned local_task_no;
+	unsigned set;
+	unsigned iter;
+
+	while (true){
+		pthread_mutex_lock (&noLock);
+		local_task_no = ++task_number;
+		pthread_mutex_unlock(&noLock);
+
+		set = local_task_no % N_THREAD;
+		iter = local_task_no / N_THREAD;
+
+		if (iter >= N_ITER)
+			break;
+
+		node_start = master->nodeN * (set / (float)N_THREAD);
+		node_end = master->nodeN * ((set+1) / (float)N_THREAD);
+		for(int i=node_start; i<node_end; ++i){
+			master->nodeList[i]->passMessages ();
+		}
+	}
+}
+#endif
 
 int main (int argc, char *argv[]){
 	char finName[1024];
@@ -344,10 +378,17 @@ int main (int argc, char *argv[]){
 		pthread_t thread[N_THREAD];
 
 		for (int j=0;j<N_THREAD;++j)
-			pthread_create (&thread[j], NULL, runThread, (void *)j);
+			pthread_create (&thread[j], NULL, runThreadUpdate, (void *)j);
 
 		for (int j=0;j<N_THREAD;++j)
 			pthread_join (thread[j], NULL);
+#if !ASYNC
+		for (int j=0;j<N_THREAD;++j)
+			pthread_create (&thread[j], NULL, runThreadPass, (void *)j);
+
+		for (int j=0; j<N_THREAD;++j)
+			pthread_join (thread[j], NULL);
+#endif
 	}else{
 		for (int j=0; j<N_ITER; ++j)
 			master->oneIteration(j>=(N_ITER/2));

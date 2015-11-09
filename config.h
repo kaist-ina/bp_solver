@@ -28,4 +28,7 @@
 // Damping ON & OFF
 #define DAMPING 1
 
+// Asynchronous Message Update On & Off
+#define ASYNC 1
+
 #endif
