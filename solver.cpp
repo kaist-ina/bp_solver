@@ -5,6 +5,7 @@
 #include <list>
 #include <cstdlib>
 #include <pthread.h>
+#include <float.h>
 #include "Node.h"
 #include "Edge.h"
 #include "config.h"
@@ -34,6 +35,7 @@ class Master {
 	void transformWeight ();
 	void postProcess ();
 	void printResult ();
+	void isMatching ();
 };
 
 void Master::createFromFile (const char *fname){
@@ -138,21 +140,23 @@ void Master::postProcess (){
 		Edge *max_e = NULL;
 		double max_w = 0.0;
 		int limit;
-		bool isAlone = true;
 
 		limit = n->outedgeList.size();
 		for(int j=0;j<limit;++j){
 			Edge *e = n->outedgeList[j];
 			if(e->decision == -1)
 				continue;
+
 			if(e->tweight > max_w){
 				max_w = e->tweight;
 				max_e = e;
 			}
-			if(e->decision == 1)
-				isAlone = false;
-			else if (e->decision == 0)
-				e->decision = -1;
+
+			if(e->decision == 1){
+				max_w = DBL_MAX;
+				max_e = e;
+			}
+			e->decision = -1;
 		}
 
 		limit = n->inedgeList.size();
@@ -164,13 +168,14 @@ void Master::postProcess (){
 				max_w = e->tweight;
 				max_e = e;
 			}
-			if(e->decision == 1)
-				isAlone = false;
-			else if (e->decision == 0)
-				e->decision = -1;
+			if(e->decision == 1){
+				max_w = DBL_MAX;
+				max_e = e;
+			}
+			e->decision = -1;
 		}
 
-		if (isAlone && max_e && max_w > 0)
+		if (max_e && max_e->weight > 0)
 			max_e->decision = 1;
 
 	}
@@ -270,7 +275,6 @@ void Master::printResult (){
 	double sum_edge = 0.0;
 #endif
 	int limit;
-
 	for(int i=0; i<nodeN; ++i){
 		Node *n = nodeList[i];
 #if VAR_NODE
@@ -281,12 +285,12 @@ void Master::printResult (){
 		limit = n->outedgeList.size();
 		for(int j=0; j<limit; ++j){
 			Edge *e = n->outedgeList[j];
-			if (e->decision == 1)
+			if (e->decision == 1){
 				sum_edge += e->weight;
+			}
 		}
 #endif
 	}
-
 #if VAR_NODE
 	cout << "Sum of Vertex Weight = " << sum_node << endl;
 #endif
@@ -294,6 +298,33 @@ void Master::printResult (){
 	cout << "Sum of Edge Weight = " << sum_edge << endl;
 #endif
 
+}
+
+void Master::isMatching (){
+	int count;
+	int limit;
+
+	for(int i=0; i<nodeN; ++i){
+		Node *n = nodeList[i];
+		count = 0;
+
+		limit = n->inedgeList.size();
+		for(int j=0; j<limit; ++j){
+			Edge *e = n->inedgeList[j];
+			if (e->decision == 1)
+				count ++;
+		}
+
+		limit = n->outedgeList.size();
+		for (int j=0; j<limit; ++j){
+			Edge *e = n->outedgeList[j];
+			if (e->decision == 1)
+				count ++;
+		}
+
+		if (count > 1)
+			cout << "ERROR" << endl;
+	}
 }
 
 void *runThreadUpdate (void *arg_){
@@ -398,6 +429,7 @@ int main (int argc, char *argv[]){
 	master->transformWeight ();
 
 	master->postProcess ();
+	master->isMatching();
 	clock_gettime(CLOCK_MONOTONIC, &finish);
 	runtime = (finish.tv_sec - start.tv_sec);
 	runtime += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
