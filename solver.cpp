@@ -139,11 +139,10 @@ void Master::postProcess (){
 		Node *n = nodeList[i];
 		Edge *max_e = NULL;
 		double max_w = 0.0;
-		int limit;
+		list<Edge *>::iterator iter;
 
-		limit = n->outedgeList.size();
-		for(int j=0;j<limit;++j){
-			Edge *e = n->outedgeList[j];
+		for(iter = n->outedgeList.begin(); iter != n->outedgeList.end(); ++iter){
+			Edge *e = *iter;
 			if(e->decision == -1)
 				continue;
 
@@ -159,9 +158,8 @@ void Master::postProcess (){
 			e->decision = -1;
 		}
 
-		limit = n->inedgeList.size();
-		for(int j=0;j<limit;++j){
-			Edge *e = n->inedgeList[j];
+		for(iter = n->inedgeList.begin(); iter != n->inedgeList.end(); ++iter){
+			Edge *e = *iter;
 			if(e->decision == -1)
 				continue;
 			if(e->tweight > max_w){
@@ -186,14 +184,14 @@ void Master::postProcess (){
 /*
 	pnodeList.sort (compare_nodes);
 	while(!pnodeList.empty ()){
-		int limit;
+		list<Edge *>::iterator iter;
 		bool isCovered = true;
 		Node *n = pnodeList.front ();
+
 		pnodeList.pop_front ();
 
-		limit = n->outedgeList.size();
-		for(int i=0;i<limit;++i){
-			Edge *e = n->outedgeList[i];
+		for(iter = n->outedgeList.begin(); iter != n->outedgeList.end(); ++iter){
+			Edge *e = *iter;
 			if (e->src->decision == 0 && e->dst->decision == 0){
 				isCovered = false;
 				n->decision = 1;
@@ -204,9 +202,8 @@ void Master::postProcess (){
 		if(!isCovered)
 			continue;
 		
-		limit = n->inedgeList.size();
-		for(int i=0;i<limit;++i){
-			Edge *e = n->inedgeList[i];
+		for(iter = n->inedgeList.begin(); iter != n->inedgeList.end(); ++iter){
+			Edge *e = *iter;
 			if(e->src->decision == 0 && e->dst->decision == 0){
 				isCovered = false;
 				n->decision = 1;
@@ -234,9 +231,9 @@ void Master::postProcess (){
 
 /* Maximum Independent Set */
 
-// global greedy algorithm
-/*
-	int limit;
+	// global greedy algorithm
+	/*
+	list<Edge *>::iterator iter;
 	bool alreadyCovered;
 
 	pnodeList.sort (compare_nodes);
@@ -245,16 +242,14 @@ void Master::postProcess (){
 		pnodeList.pop_front ();
 		alreadyCovered = false;
 
-		limit = n->outedgeList.size();
-		for(int i=0; i<limit; ++i){
-			Edge *e = n->outedgeList[i];
+		for(iter = n->outedgeList.begin(); iter != n->outedgeList.end(); ++iter){
+			Edge *e = *iter;
 			if (e->dst->decision == 1)
 				alreadyCovered = true;
 		}
 
-		limit = n->inedgeList.size();
-		for(int i=0; i<limit; ++i){
-			Edge *e = n->inedgeList[i];
+		for(iter = n->inedgeList.begin(); iter != n->inedgeList.end(); ++iter){
+			Edge *e = *iter;
 			if (e->src->decision == 1)
 				alreadyCovered = true;
 		}
@@ -274,7 +269,7 @@ void Master::printResult (){
 #if VAR_EDGE
 	double sum_edge = 0.0;
 #endif
-	int limit;
+	list<Edge *>::iterator iter;
 	for(int i=0; i<nodeN; ++i){
 		Node *n = nodeList[i];
 #if VAR_NODE
@@ -282,9 +277,8 @@ void Master::printResult (){
 			sum_node += n->weight;
 #endif
 #if VAR_EDGE
-		limit = n->outedgeList.size();
-		for(int j=0; j<limit; ++j){
-			Edge *e = n->outedgeList[j];
+		for(iter = n->outedgeList.begin(); iter != n->outedgeList.end(); ++iter){
+			Edge *e = *iter;
 			if (e->decision == 1){
 				sum_edge += e->weight;
 			}
@@ -302,22 +296,20 @@ void Master::printResult (){
 
 void Master::isMatching (){
 	int count;
-	int limit;
+	list<Edge *>::iterator iter;
 
 	for(int i=0; i<nodeN; ++i){
 		Node *n = nodeList[i];
 		count = 0;
 
-		limit = n->inedgeList.size();
-		for(int j=0; j<limit; ++j){
-			Edge *e = n->inedgeList[j];
+		for(iter = n->inedgeList.begin(); iter != n->inedgeList.end(); ++iter){
+			Edge *e = *iter;
 			if (e->decision == 1)
 				count ++;
 		}
 
-		limit = n->outedgeList.size();
-		for (int j=0; j<limit; ++j){
-			Edge *e = n->outedgeList[j];
+		for(iter = n->outedgeList.begin(); iter != n->outedgeList.end(); ++iter){
+			Edge *e = *iter;
 			if (e->decision == 1)
 				count ++;
 		}

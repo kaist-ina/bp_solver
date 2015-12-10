@@ -19,18 +19,16 @@ void Node::transformNodeWeight (){
 //** Here goes the user defined function for transforming node weights **//
 	/* Minimum Vertex Cover */
 	/*
-	int limit;
 	double sum = 0.0;
+	list<Edge *>::iterator iter;
 
-	limit = outedgeList.size();
-	for(int i=0;i<limit;++i){
-		Edge *e = outedgeList[i];
-		sum += e->d_to_s;	
+	for(iter = outedgeList.begin(); iter != outedgeList.end(); ++iter){
+		Edge *e = *iter;
+		sum += e->d_to_s;
 	}
 
-	limit = inedgeList.size();
-	for(int i=0;i<limit;++i){
-		Edge *e = inedgeList[i];
+	for(iter = inedgeList.begin(); iter != inedgeList.end(); ++iter){
+		Edge *e = *iter;
 		sum += e->s_to_d;
 	}
 
@@ -39,20 +37,18 @@ void Node::transformNodeWeight (){
 
 	// Maximum Independent Set
 	/*
-	int limit;
 	double sum = 0.0;
+	list<Edge *>::iterator iter;
 
-	limit = outedgeList.size();
-	for(int i=0;i<limit;++i){
-		Edge *e = outedgeList[i];
-		sum += e->d_to_s;	
+	for(iter = outedgeList.begin(); iter != outedgeList.end(); ++iter){
+		Edge *e = *iter;
+		sum += e->d_to_s;
 	}
 
-	limit = inedgeList.size();
-	for(int i=0;i<limit;++i){
-		Edge *e = inedgeList[i];
+	for(iter = inedgeList.begin(); iter != inedgeList.end(); ++iter){
+		Edge *e = *iter;
 		sum += e->s_to_d;
-	}
+	}	
 
 	tweight = getWeight () - sum;
 	*/
@@ -62,35 +58,37 @@ void Node::transformNodeWeight (){
 void Node::initNodeMessage (){
 	/* Minimum Vertex Cover */
 	/*
-	int limit = outedgeList.size();
+	list<Edge *>::iterator iter;
 	int degree = getDegree ();
 	double initMsg = - (getWeight()/(double)degree);
 	
-	for(int i=0;i<limit;++i){
-		outedgeList[i]->d_to_s = initMsg;
+	for(iter = outedgeList.begin(); iter != outedgeList.end(); ++iter){
+		Edge *e = *iter;
+		e->d_to_s = initMsg;
 	}
 
-	limit = inedgeList.size ();
-	for(int i=0;i<limit;++i){
-		inedgeList[i]->s_to_d = initMsg;
+	for(iter = inedgeList.begin(); iter != inedgeList.end(); ++iter){
+		Edge *e = *iter;
+		e->s_to_d = initMsg;
 	}
+	
 	*/
 
 	// Maximum Weight Independent Set	
 	/*
-	int limit;
 	int degree = getDegree ();
 	double initMsg = (getWeight()/(double)degree);
-	
-	limit = outedgeList.size();
-	for(int i=0;i<limit;++i){
-		outedgeList[i]->d_to_s = initMsg;
+	list<Edge *>::iterator iter;
+
+	for(iter = outedgeList.begin(); iter != outedgeList.end(); ++iter){
+		Edge *e = *iter;
+		e->d_to_s = initMsg;
 	}
 
-	limit = inedgeList.size ();
-	for(int i=0;i<limit;++i){
-		inedgeList[i]->s_to_d = initMsg;
-	}
+	for(iter = inedgeList.begin(); iter != inedgeList.end(); ++iter){
+		Edge *e = *iter;
+		e->s_to_d = initMsg;
+	}	
 	*/
 }
 #endif
@@ -109,11 +107,11 @@ void Node::initMessage (){
 	initNodeMessage ();
 #endif
 #if VAR_EDGE
-	int limit = outedgeList.size();
-
-	for(int i=0;i<limit;++i){
-		outedgeList[i]->initEdgeMessage ();
-	}
+	list<Edge *>::iterator iter;
+	for(iter = outedgeList.begin(); iter != outedgeList.end(); ++iter){
+		Edge *e = *iter;
+		e->initEdgeMessage ();
+	}	
 #endif
 }
 
@@ -126,12 +124,11 @@ void Node::updateMessage (bool damp){
 	double max = -1;
 	double secondMax = 0;
 	double tmp;
-	int limit;
 	double new_val;
+	list<Edge *>::iterator iter;
 
-	limit = outedgeList.size();
-	for (int i=0;i<limit;++i){
-		Edge *e = outedgeList[i];
+	for(iter = outedgeList.begin(); iter != outedgeList.end(); ++iter){
+		Edge *e = *iter;
 		tmp = e->getWeight() - e->d_to_s;
 
 		if (tmp >= max){
@@ -142,9 +139,8 @@ void Node::updateMessage (bool damp){
 			secondMax = tmp;
 	}
 
-	limit = inedgeList.size();
-	for (int i=0;i<limit;++i){
-		Edge *e = inedgeList[i];
+	for (iter = inedgeList.begin(); iter != inedgeList.end(); ++iter){
+		Edge *e = *iter;
 		tmp = e->getWeight() - e->s_to_d;
 
 		if (tmp >= max){
@@ -160,9 +156,8 @@ void Node::updateMessage (bool damp){
 	if (secondMax < 0)
 		secondMax = 0;
 
-	limit = outedgeList.size();
-	for(int i=0;i<limit;++i){
-		Edge *e = outedgeList[i];
+	for(iter = outedgeList.begin(); iter != outedgeList.end(); ++iter){
+		Edge *e = *iter;
 		if (DAMPING && damp){
 			new_val = 0.5*e->s_to_d + 0.5*((e!=max_edge)?max:secondMax);
 			e->updateStoD (new_val);
@@ -172,9 +167,8 @@ void Node::updateMessage (bool damp){
 		}
 	}
 
-	limit = inedgeList.size();
-	for(int i=0;i<limit;++i){
-		Edge *e = inedgeList[i];
+	for(iter = inedgeList.begin(); iter != inedgeList.end(); ++iter){
+		Edge *e = *iter;
 		if (DAMPING && damp){
 			new_val = 0.5*e->d_to_s + 0.5*((e!=max_edge)?max:secondMax);
 			e->updateDtoS (new_val);
@@ -187,21 +181,20 @@ void Node::updateMessage (bool damp){
 /* Minimum Weight Vertex Cover */
 /*
 	double sum=0.0;
-	int limit;
+	list<Edge *>::iterator iter;
 
-	limit = outedgeList.size();
-	for(int i=0;i<limit;++i){
-		sum += outedgeList[i]->d_to_s;
+	for(iter = outedgeList.begin(); iter != outedgeList.end(); ++iter){
+		Edge *e = *iter;
+		sum += e->d_to_s;
 	}
 
-	limit = inedgeList.size();
-	for(int i=0;i<limit;++i){
-		sum += inedgeList[i]->s_to_d;
+	for(iter = inedgeList.begin(); iter != inedgeList.end(); ++iter){
+		Edge *e = *iter;
+		sum += e->s_to_d;
 	}
 
-	limit = outedgeList.size();
-	for(int i=0;i<limit;++i){
-		Edge *e = outedgeList[i];
+	for(iter = outedgeList.begin(); iter != outedgeList.end(); ++iter){
+		Edge *e = *iter;
 		double tmp = - getWeight () - sum + e->d_to_s;
 		if(tmp > 0.0) tmp = 0.0;
 		if (DAMPING && damp)
@@ -210,9 +203,8 @@ void Node::updateMessage (bool damp){
 			e->s_to_d = tmp;
 	}
 
-	limit = inedgeList.size();
-	for(int i=0;i<limit;++i){
-		Edge *e = inedgeList[i];
+	for(iter = inedgeList.begin(); iter != inedgeList.end(); ++iter){
+		Edge *e = *iter;
 		double tmp = - getWeight () - sum + e->s_to_d;
 		if (tmp > 0.0) tmp = 0.0;
 		if (DAMPING && damp)
@@ -225,21 +217,20 @@ void Node::updateMessage (bool damp){
 /* Maximum Weight Independent Set */
 /*
 	double sum=0.0;
-	int limit;
+	list<Edge *>::iterator iter;
 
-	limit = outedgeList.size();
-	for(int i=0;i<limit;++i){
-		sum += outedgeList[i]->d_to_s;
+	for(iter = outedgeList.begin(); iter != outedgeList.end(); ++iter){
+		Edge *e = *iter;
+		sum += e->d_to_s;
 	}
 
-	limit = inedgeList.size();
-	for(int i=0;i<limit;++i){
-		sum += inedgeList[i]->s_to_d;
+	for(iter = inedgeList.begin(); iter != inedgeList.end(); ++iter){
+		Edge *e = *iter;
+		sum += e->s_to_d;
 	}
 
-	limit = outedgeList.size();
-	for(int i=0;i<limit;++i){
-		Edge *e = outedgeList[i];
+	for(iter = outedgeList.begin(); iter != outedgeList.end(); ++iter){
+		Edge *e = *iter;
 		double tmp =  getWeight () - sum + e->d_to_s;
 		if(tmp < 0.0) tmp = 0.0;
 		if (DAMPING && damp)
@@ -248,9 +239,8 @@ void Node::updateMessage (bool damp){
 			e->s_to_d = tmp;
 	}
 
-	limit = inedgeList.size();
-	for(int i=0;i<limit;++i){
-		Edge *e = inedgeList[i];
+	for(iter = inedgeList.begin(); iter != inedgeList.end(); ++iter){
+		Edge *e = *iter;
 		double tmp =  getWeight () - sum + e->s_to_d;
 		if (tmp < 0.0) tmp = 0.0;
 		if (DAMPING && damp)
@@ -263,10 +253,10 @@ void Node::updateMessage (bool damp){
 
 #if !ASYNC
 void Node::passMessages (){
-	int limit = outedgeList.size();
+	list<Edge *>::iterator iter;
 
-	for (int i=0; i<limit; ++i){
-		Edge *e = outedgeList[i];
+	for(iter = outedgeList.begin(); iter != outedgeList.end(); ++iter){
+		Edge *e = *iter;
 		e->d_to_s = e->new_d_to_s;
 		e->s_to_d = e->new_s_to_d;
 	}
@@ -276,16 +266,17 @@ void Node::passMessages (){
 int Node::getDegree (){
 #if VAR_EDGE
 	int degree = 0;
-	int limit = outedgeList.size();
+	list<Edge *>::iterator iter;
 
-	for(int i=0;i<limit;++i){
-		if(outedgeList[i]->decision == 1)
+	for(iter = outedgeList.begin(); iter != outedgeList.end(); ++iter){
+		Edge *e = *iter;
+		if(e->decision == 1)
 			degree++;
 	}
 
-	limit = inedgeList.size();
-	for (int i=0;i<limit;++i){
-		if(inedgeList[i]->decision == 1)
+	for(iter = inedgeList.begin(); iter != inedgeList.end(); ++iter){
+		Edge *e = *iter;
+		if(e->decision == 1)
 			degree++;
 	}
 	return degree;
@@ -304,10 +295,11 @@ void Node::transformWeight (){
 
 #if VAR_EDGE
 	// Edge Weight Transform
-	int limit;
+	list<Edge *>::iterator iter;
 
-	limit = outedgeList.size();
-	for(int i=0;i<limit;++i)
-		outedgeList[i]->transformEdgeWeight();
+	for(iter = outedgeList.begin(); iter != outedgeList.end(); ++iter){
+		Edge *e = *iter;
+		e->transformEdgeWeight();
+	}
 #endif
 }

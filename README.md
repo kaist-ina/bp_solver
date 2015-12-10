@@ -112,14 +112,13 @@ Here how to traverse nodes and edges is explained.
 
 ```
 for(int i=0; i<nodeN; ++i){
-	int limit;
+	list<Edge *>::iterator iter;
 	Node *n = nodeList[i];
 	// traversing nodes
 
-	limit = n->outedgeList.size();
-	for(int j=0; j<limit; ++j){
-		Edge *e = n->outedgeList[j];
-		// traversing edges
+	for(iter = n->outedgeList.begin(); iter != n->outedgeList.end(); ++iter){
+		Edge *e = *iter;
+		// do something on e
 	}
 }
 ```

@@ -1,7 +1,7 @@
 #ifndef __NODE_H__
 #define __NODE_H__
 
-#include <vector>
+#include <list>
 #include "config.h"
 
 using namespace std;
@@ -9,8 +9,8 @@ class Edge;
 
 class Node {
 	public:
-	vector<Edge *> inedgeList;
-	vector<Edge *> outedgeList;
+	list<Edge *> inedgeList;
+	list<Edge *> outedgeList;
 
 #if VAR_NODE
 	double weight;
