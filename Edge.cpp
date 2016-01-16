@@ -42,6 +42,6 @@ void Edge::transformEdgeWeight (){
 	//** Here goes the implementation for transforming edge weight function **//	
 
 	// Maximum Weight Matching
-	tweight = weight - (s_to_d + d_to_s);
+	tweight = getWeight() - (s_to_d + d_to_s);
 }
 #endif
